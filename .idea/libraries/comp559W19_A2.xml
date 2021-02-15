@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="comp559W19_A2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/mtj.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/mtjsrc.zip!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/jogamp-fat.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/slf4j-simple-1.7.30.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/xuggle-xuggler-5.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/slf4j-api-1.7.30.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/jogamp-fat-java-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/vecmath.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/comp559W19_A2/mintools.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
