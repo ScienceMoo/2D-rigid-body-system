@@ -168,7 +168,9 @@ public class LCPApp implements SceneGraphNode, Interactor {
         text += "r = " + system.collisionProcessor.restitution.getValue() +"\n";
         
         if ( ! hideOverlay.getValue() ) {
-        	EasyViewer.printTextLines( drawable, text, 10, 10, 12, GLUT.BITMAP_HELVETICA_10 );
+            //TODO: dpi stuff
+//        	EasyViewer.printTextLines( drawable, text, 10, 10, 12, GLUT.BITMAP_HELVETICA_10 );
+        	EasyViewer.printTextLines( drawable, text, 20, 20, 20, GLUT.BITMAP_HELVETICA_18 );
         }
     	EasyViewer.endOverlay(drawable);
 
@@ -427,11 +429,12 @@ public class LCPApp implements SceneGraphNode, Interactor {
         component.addMouseMotionListener( new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                setPoint( e.getPoint().x, e.getPoint().y );
+                // TODO dpi stuff
+                setPoint( e.getPoint().x * 2, e.getPoint().y * 2 );
                 if ( picked == null ) {
                     if ( (e.getModifiers() & InputEvent.BUTTON2_MASK) != 0) { // button3 ) {
-                        posx.setValue( posx.getValue() + e.getPoint().x - prevMousePoint.x );
-                        posy.setValue( posy.getValue() + e.getPoint().y - prevMousePoint.y );
+                        posx.setValue( posx.getValue() + (2 * e.getPoint().x) - prevMousePoint.x );
+                        posy.setValue( posy.getValue() + (2 * e.getPoint().y) - prevMousePoint.y );
                     }
                     if ( (e.getModifiers() & InputEvent.BUTTON3_MASK) != 0 ) {
                         scale.setValue( scale.getValue() * Math.pow(1.002, e.getPoint().y - prevMousePoint.y ));
@@ -444,7 +447,7 @@ public class LCPApp implements SceneGraphNode, Interactor {
             @Override
             public void mousePressed(MouseEvent e) {       
                 prevMousePoint.setLocation( e.getPoint() );
-                setPoint( e.getPoint().x, e.getPoint().y );
+                setPoint( 2 * e.getPoint().x, 2 * e.getPoint().y );
                 if ( (e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 ) {
                     picked = system.pickBody( mousePoint );                
                     if ( picked != null ) {

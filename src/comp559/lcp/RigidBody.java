@@ -169,21 +169,30 @@ public class RigidBody {
      */
     public void applyContactForceW( Point2d contactPointW, Vector2d contactForceW ) {
         force.add( contactForceW );
-        // TODO: Compute the torque applied to the body 
+        // TODO: Compute the torque applied to the body
+        torque = 0;
+//
+//        // distance between contact point and center of mass
+//        double r = Math.sqrt(Math.pow(contactPointW.x - x.x, 2) + Math.pow(contactPointW.y - x.y, 2));
+//
+//        // vector from center of mass to contact point
+//        Vector2d r_vector = new Vector2d();
+//        r_vector.add(contactPointW);
+//        r_vector.sub(x);
+//
+//        double angle = Math.acos(r_vector.dot(contactForceW) / (r_vector.length() * contactForceW.length()));
+//
+//        // calculate torque
+//
+//        if (angle < 180) {
+//            double t = r * Math.sin(angle);
+//            torque += t;
+//        } else {
+//            angle -= 180;
+//            double t = r * Math.sin(angle);
+//            torque -= t;
+//        }
 
-        // distance between contact point and center of mass
-        double r = Math.sqrt(Math.pow(contactPointW.x - x.x, 2) + Math.pow(contactPointW.y - x.y, 2));
-
-        // vector from center of mass to contact point
-        Vector2d r_vector = new Vector2d();
-        r_vector.add(contactPointW);
-        r_vector.sub(x);
-
-        double angle = Math.acos(r_vector.dot(contactForceW) / (r_vector.length() * contactForceW.length()));
-
-        // calculate torque
-        double t = r * Math.sin(angle);
-        torque += t;
     }
     
     /**
