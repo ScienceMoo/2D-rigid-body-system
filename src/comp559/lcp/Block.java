@@ -17,7 +17,7 @@ public class Block {
     static float alpha;
     
     /** Radius of circle that encloses this block */
-    static double radius = Math.sqrt(2) * 0.5;// * 0.9; // 90% of the normal size... allow for some overlap?
+    static double radius = Math.sqrt(2) * 0.5 * 0.95; // 90% of the normal size... allow for some overlap?
     
     /** Block pixel colour */
     Color3f c = new Color3f();

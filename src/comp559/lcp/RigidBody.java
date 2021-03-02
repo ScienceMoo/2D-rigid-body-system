@@ -84,7 +84,7 @@ public class RigidBody {
         // compute the mass and center of mass position        
         for ( Block b : blocks ) {
             double mass = b.getColourMass();
-            massLinear += mass;            
+            massLinear += mass;
             x0.x += b.j * mass;
             x0.y += b.i * mass; 
         }

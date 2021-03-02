@@ -73,13 +73,25 @@ public class CollisionProcessor {
     private void broadPhase() {
         // Naive n squared body test.. might not be that bad for small number of bodies 
         visitID++;
+//        int n = bodies.size();
+//        int index = -1;
+
+//        while (index < n - 1) {
+//            index++;
+//            for (int i = index + 1; i < n; i++) { // should be more efficient
+//                if ( !(bodies.get(index).pinned && bodies.get(i).pinned) ) {
+//                    narrowPhase( bodies.get(index), bodies.get(i) );
+//                }
+//            }
+//        }
+
         for ( RigidBody b1 : bodies ) {
             for ( RigidBody b2 : bodies ) { // not so inefficient given the continue on the next line
                 if ( b1.index >= b2.index ) continue;
-                if ( b1.pinned && b2.pinned ) continue;                
-                narrowPhase( b1, b2 );                
+                if ( b1.pinned && b2.pinned ) continue;
+                narrowPhase( b1, b2 );
             }
-        }        
+        }
     }
     
     /**
@@ -97,6 +109,85 @@ public class CollisionProcessor {
             }
         } else {
             // TODO: implement code to use hierarchical collision detection on body pairs
+            BVNode tree1 = new BVNode(body1.blocks, body1);
+            BVNode tree2 = new BVNode(body2.blocks, body2);
+
+            tree1.boundingDisc.updatecW();
+            tree2.boundingDisc.updatecW();
+
+            if (tree1.boundingDisc.intersects(tree2.boundingDisc)) {
+                while (!(tree1.isLeaf() && tree2.isLeaf())) {
+                    tree1.visitID = visitID;
+                    tree2.visitID = visitID;
+                    if (tree1.isLeaf()) {
+                        tree2.child1.boundingDisc.updatecW();
+                        tree2.child2.boundingDisc.updatecW();
+                        if (tree2.child1.boundingDisc.intersects(tree1.boundingDisc)) {
+                            tree2 = tree2.child1;
+                            if (tree2.isLeaf()) {
+                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
+                            }
+                        } else if (tree2.child2.boundingDisc.intersects(tree1.boundingDisc)) {
+                            tree2 = tree2.child2;
+                            if (tree2.isLeaf()) {
+                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    else if (tree2.isLeaf()) {
+                        tree1.child1.boundingDisc.updatecW();
+                        tree1.child2.boundingDisc.updatecW();
+                        if (tree1.child1.boundingDisc.intersects(tree2.boundingDisc)) {
+                            tree1 = tree1.child1;
+                            if (tree1.isLeaf()) {
+                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
+                            }
+                        } else if (tree1.child2.boundingDisc.intersects(tree2.boundingDisc)) {
+                            tree1 = tree1.child2;
+                            if (tree1.isLeaf()) {
+                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    else {
+                        tree1.child1.boundingDisc.updatecW();
+                        tree1.child2.boundingDisc.updatecW();
+                        tree2.child1.boundingDisc.updatecW();
+                        tree2.child2.boundingDisc.updatecW();
+                        if (tree1.child1.boundingDisc.intersects(tree2.child1.boundingDisc)) {
+                            tree1 = tree1.child1;
+                            tree2 = tree2.child1;
+                            if (tree1.isLeaf() && tree2.isLeaf()) {
+                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
+                            }
+                        } else if (tree1.child1.boundingDisc.intersects(tree2.child2.boundingDisc)) {
+                            tree1 = tree1.child1;
+                            tree2 = tree2.child2;
+                            if (tree1.isLeaf() && tree2.isLeaf()) {
+                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
+                            }
+                        } else if (tree1.child2.boundingDisc.intersects(tree2.child1.boundingDisc)) {
+                            tree1 = tree1.child2;
+                            tree2 = tree2.child1;
+                            if (tree1.isLeaf() && tree2.isLeaf()) {
+                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
+                            }
+                        } else if (tree1.child2.boundingDisc.intersects(tree2.child2.boundingDisc)) {
+                            tree1 = tree1.child2;
+                            tree2 = tree2.child2;
+                            if (tree1.isLeaf() && tree2.isLeaf()) {
+                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
 
         }
     }
@@ -215,7 +306,7 @@ public class CollisionProcessor {
     private BooleanParameter doLCP = new BooleanParameter( "do LCP solve", false );
     
     /** Flag for enabling the use of hierarchical collision detection for body pairs */
-    private BooleanParameter useBVTree = new BooleanParameter( "use BVTree", false );
+    private BooleanParameter useBVTree = new BooleanParameter( "use BVTree", true );
     
     /**
      * @return controls for the collision processor
