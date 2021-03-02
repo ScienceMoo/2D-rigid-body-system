@@ -96,7 +96,6 @@ public class CollisionProcessor {
     
     /**
      * Checks for collision between boundary blocks on two rigid bodies.
-     * TODO: This needs to be improved as the n-squared block test is too slow!
      * @param body1
      * @param body2
      */
@@ -112,83 +111,38 @@ public class CollisionProcessor {
             BVNode tree1 = new BVNode(body1.blocks, body1);
             BVNode tree2 = new BVNode(body2.blocks, body2);
 
-            tree1.boundingDisc.updatecW();
-            tree2.boundingDisc.updatecW();
+            BVtreeSearch(body1, body2, tree1, tree2);
+        }
+    }
 
-            if (tree1.boundingDisc.intersects(tree2.boundingDisc)) {
-                while (!(tree1.isLeaf() && tree2.isLeaf())) {
-                    tree1.visitID = visitID;
-                    tree2.visitID = visitID;
-                    if (tree1.isLeaf()) {
-                        tree2.child1.boundingDisc.updatecW();
-                        tree2.child2.boundingDisc.updatecW();
-                        if (tree2.child1.boundingDisc.intersects(tree1.boundingDisc)) {
-                            tree2 = tree2.child1;
-                            if (tree2.isLeaf()) {
-                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
-                            }
-                        } else if (tree2.child2.boundingDisc.intersects(tree1.boundingDisc)) {
-                            tree2 = tree2.child2;
-                            if (tree2.isLeaf()) {
-                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                    else if (tree2.isLeaf()) {
-                        tree1.child1.boundingDisc.updatecW();
-                        tree1.child2.boundingDisc.updatecW();
-                        if (tree1.child1.boundingDisc.intersects(tree2.boundingDisc)) {
-                            tree1 = tree1.child1;
-                            if (tree1.isLeaf()) {
-                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
-                            }
-                        } else if (tree1.child2.boundingDisc.intersects(tree2.boundingDisc)) {
-                            tree1 = tree1.child2;
-                            if (tree1.isLeaf()) {
-                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                    else {
-                        tree1.child1.boundingDisc.updatecW();
-                        tree1.child2.boundingDisc.updatecW();
-                        tree2.child1.boundingDisc.updatecW();
-                        tree2.child2.boundingDisc.updatecW();
-                        if (tree1.child1.boundingDisc.intersects(tree2.child1.boundingDisc)) {
-                            tree1 = tree1.child1;
-                            tree2 = tree2.child1;
-                            if (tree1.isLeaf() && tree2.isLeaf()) {
-                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
-                            }
-                        } else if (tree1.child1.boundingDisc.intersects(tree2.child2.boundingDisc)) {
-                            tree1 = tree1.child1;
-                            tree2 = tree2.child2;
-                            if (tree1.isLeaf() && tree2.isLeaf()) {
-                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
-                            }
-                        } else if (tree1.child2.boundingDisc.intersects(tree2.child1.boundingDisc)) {
-                            tree1 = tree1.child2;
-                            tree2 = tree2.child1;
-                            if (tree1.isLeaf() && tree2.isLeaf()) {
-                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
-                            }
-                        } else if (tree1.child2.boundingDisc.intersects(tree2.child2.boundingDisc)) {
-                            tree1 = tree1.child2;
-                            tree2 = tree2.child2;
-                            if (tree1.isLeaf() && tree2.isLeaf()) {
-                                processCollision(body1, tree1.leafBlock, body2, tree2.leafBlock);
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                }
+    public void BVtreeSearch(RigidBody body1, RigidBody body2, BVNode A, BVNode B) {
+        A.boundingDisc.updatecW();
+        B.boundingDisc.updatecW();
+
+        A.visitID = visitID;
+        B.visitID = visitID;
+
+        if (A.boundingDisc.intersects(B.boundingDisc)) {
+            if (A.isLeaf() && B.isLeaf()) {
+                processCollision(body1, A.leafBlock, body2, B.leafBlock);
             }
-
+            else if (A.isLeaf()) {
+                BVtreeSearch(body1, body2, A, B.child1);
+                BVtreeSearch(body1, body2, A, B.child2);
+            }
+            else if (B.isLeaf()) {
+                BVtreeSearch(body1, body2, A.child1, B);
+                BVtreeSearch(body1, body2, A.child2, B);
+            }
+            else {
+                BVtreeSearch(body1, body2, A.child1, B.child1);
+                BVtreeSearch(body1, body2, A.child1, B.child2);
+                BVtreeSearch(body1, body2, A.child2, B.child1);
+                BVtreeSearch(body1, body2, A.child2, B.child2);
+            }
+        }
+        else {
+            return;
         }
     }
     
