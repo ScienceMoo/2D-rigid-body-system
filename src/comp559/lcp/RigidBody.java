@@ -180,15 +180,50 @@ public class RigidBody {
         r_vector.add(contactPointW);
         r_vector.sub(x);
         double r = r_vector.length();
+        double F = contactForceW.length();
 
-        if (r_vector.x != 0 && contactPointW.x != 0) {
-            double angle1 = Math.tan(r_vector.y / r_vector.x);
-            double angle2 = Math.tan(contactPointW.y / contactPointW.x);
-            double angle = angle1 - angle2;
-
-            double t = r * Math.sin(angle);
-            torque += t;
+        double angle1;
+        double angle2;
+        if (r_vector.x == 0) {
+            angle1 = Math.PI / 2;
+            if (r_vector.y < 0) {
+                angle1 *= -1;
+            }
+        } else {
+            angle1 = Math.atan(r_vector.y / r_vector.x);
         }
+        if (r_vector.y < 0 && r_vector.x < 0) {
+            angle1 += Math.PI;
+        }
+        else if (r_vector.x < 0) {
+            angle1 = (Math.PI / 2) - angle1;
+        }
+        else if (r_vector.y < 0) {
+            angle1 = (2 * Math.PI) + angle1;
+        }
+
+        if (contactPointW.x == 0) {
+            angle2 = Math.PI / 2;
+            if (contactPointW.y < 0) {
+                angle2 *= -1;
+            }
+        } else {
+            angle2 = Math.atan(contactPointW.y / contactPointW.x);
+        }
+        if (contactPointW.y < 0 && contactPointW.x < 0) {
+            angle2 += Math.PI;
+        }
+        else if (contactPointW.x < 0) {
+            angle2 = (Math.PI / 2) - angle2;
+        }
+        else if (contactPointW.y < 0) {
+            angle2 = (2 * Math.PI) + angle2;
+        }
+
+        double angle = Math.abs(angle1 - angle2);
+
+        double t = - r * F * Math.sin(angle);
+        torque += t;
     }
     
     /**
@@ -202,12 +237,11 @@ public class RigidBody {
             // TODO: use torques to advance the angular state of the rigid body
             omega += (1.0 / massAngular) * torque * dt;
             theta += omega * dt;
-            if (theta < 0) {
-                theta += Math.PI;
-            } else if (theta > Math.PI) {
-                theta -= Math.PI;
-            }
-//            theta = Math.round(theta * 100000.0) / 100000.0;
+//            if (theta < 0) {
+//                theta += Math.PI;
+//            } else if (theta > Math.PI) {
+//                theta -= Math.PI;
+//            }
 
             v.x += (1.0 / massLinear) * force.x * dt;
             v.y += (1.0 / massLinear) * force.y * dt;
