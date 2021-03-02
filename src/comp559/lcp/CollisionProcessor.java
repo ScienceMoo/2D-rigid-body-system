@@ -188,10 +188,10 @@ public class CollisionProcessor {
     }
    
     /** Stiffness of the contact penalty spring */
-    private DoubleParameter contactSpringStiffness = new DoubleParameter("penalty contact stiffness", 1e3, 1, 1e5 );
+    private DoubleParameter contactSpringStiffness = new DoubleParameter("penalty contact stiffness", 3e3, 1, 1e5 );
     
     /** Viscous damping coefficient for the contact penalty spring */
-    private DoubleParameter contactSpringDamping = new DoubleParameter("penalty contact damping", 10, 1, 1e4 );
+    private DoubleParameter contactSpringDamping = new DoubleParameter("penalty contact damping", 1, 1, 1e4 );
     
     /** Threshold for the relative velocity in the normal direction, for determining if spring force will be applied. */
     private DoubleParameter separationVelocityThreshold = new DoubleParameter( "penalty separation velocity threshold (controls bounce)", 1e-9, 1e-9, 1e3 );
@@ -203,7 +203,7 @@ public class CollisionProcessor {
     private BooleanParameter enableContactDamping = new BooleanParameter("enable penalty contact damping", true );
     
     /** Restitution parameter for contact constraints */
-    public DoubleParameter restitution = new DoubleParameter( "restitution (bounce)", 0, 0, 1 );
+    public DoubleParameter restitution = new DoubleParameter( "restitution (bounce)", 0.1, 0, 1 );
     
     /** Coulomb friction coefficient for contact constraint */
     public DoubleParameter friction = new DoubleParameter("Coulomb friction", 0.33, 0, 2 );
