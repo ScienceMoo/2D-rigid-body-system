@@ -153,7 +153,7 @@ public class LCPApp implements SceneGraphNode, Interactor {
 
         final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         gl.glColor4f(0,0,0,1);
-        String text = "YOUR NAME HERE\n" + system.name + "\n";
+        String text = "Marie Cornellier\n" + system.name + "\n";
         text += "bodies = " + system.bodies.size() + "\n";        
         text += "contacts = " + system.collisionProcessor.contacts.size() + "\n";
         text += formatter.format( new Date() ) + "\n";

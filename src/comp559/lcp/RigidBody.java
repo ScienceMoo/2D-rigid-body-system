@@ -80,7 +80,7 @@ public class RigidBody {
     public RigidBody( ArrayList<Block> blocks, ArrayList<Block> boundaryBlocks ) {
 
         this.blocks = blocks;
-        this.boundaryBlocks = boundaryBlocks;        
+        this.boundaryBlocks = boundaryBlocks;
         // compute the mass and center of mass position        
         for ( Block b : blocks ) {
             double mass = b.getColourMass();
@@ -170,8 +170,20 @@ public class RigidBody {
     public void applyContactForceW( Point2d contactPointW, Vector2d contactForceW ) {
         force.add( contactForceW );
         // TODO: Compute the torque applied to the body 
-        
-        
+
+        // distance between contact point and center of mass
+        double r = Math.sqrt(Math.pow(contactPointW.x - x.x, 2) + Math.pow(contactPointW.y - x.y, 2));
+
+        // vector from center of mass to contact point
+        Vector2d r_vector = new Vector2d();
+        r_vector.add(contactPointW);
+        r_vector.sub(x);
+
+        double angle = Math.acos(r_vector.dot(contactForceW) / (r_vector.length() * contactForceW.length()));
+
+        // calculate torque
+        double t = r * Math.sin(angle);
+        torque += t;
     }
     
     /**
@@ -183,9 +195,10 @@ public class RigidBody {
     public void advanceTime( double dt ) {
         if ( !pinned ) {            
             // TODO: use torques to advance the angular state of the rigid body
-            
-            v.x += 1.0 / massLinear * force.x * dt;
-            v.y += 1.0 / massLinear * force.y * dt;
+            omega += (1.0 / massAngular) * torque * dt;
+            theta += omega * dt;
+            v.x += (1.0 / massLinear) * force.x * dt;
+            v.y += (1.0 / massLinear) * force.y * dt;
             x.x += v.x * dt;
             x.y += v.y * dt;
             updateTransformations();
