@@ -9,6 +9,8 @@ import com.jogamp.opengl.GLAutoDrawable;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 
+import static java.lang.Float.NaN;
+
 /**
  * Simple 2D rigid body based on image samples
  * @author kry
@@ -106,7 +108,9 @@ public class RigidBody {
             double mass = b.getColourMass();
             massAngular = mass * (1+1)/12;
         }
-        x.set(x0);        
+        x.set(x0);
+        theta = 0;
+        torque = 0;
         transformB2W.set( theta, x );
         transformW2B.set( theta, x );
         transformW2B.invert();
@@ -171,27 +175,20 @@ public class RigidBody {
         force.add( contactForceW );
 //         TODO: Compute the torque applied to the body
 
-        // distance between contact point and center of mass
-        double r = Math.sqrt(Math.pow(contactPointW.x - x.x, 2) + Math.pow(contactPointW.y - x.y, 2));
-
         // vector from center of mass to contact point
-        Vector2d r_vector = new Vector2d();
+        Vector2d r_vector = new Vector2d(0, 0);
         r_vector.add(contactPointW);
         r_vector.sub(x);
+        double r = r_vector.length();
 
-        double angle = Math.acos(r_vector.dot(contactForceW) / (r_vector.length() * contactForceW.length()));
+        if (r_vector.x != 0 && contactPointW.x != 0) {
+            double angle1 = Math.tan(r_vector.y / r_vector.x);
+            double angle2 = Math.tan(contactPointW.y / contactPointW.x);
+            double angle = angle1 - angle2;
 
-        // calculate torque
-
-        if (angle < 180) {
             double t = r * Math.sin(angle);
             torque += t;
-        } else {
-            angle -= 180;
-            double t = r * Math.sin(angle);
-            torque -= t;
         }
-
     }
     
     /**
@@ -205,6 +202,12 @@ public class RigidBody {
             // TODO: use torques to advance the angular state of the rigid body
             omega += (1.0 / massAngular) * torque * dt;
             theta += omega * dt;
+            if (theta < 0) {
+                theta += Math.PI;
+            } else if (theta > Math.PI) {
+                theta -= Math.PI;
+            }
+//            theta = Math.round(theta * 100000.0) / 100000.0;
 
             v.x += (1.0 / massLinear) * force.x * dt;
             v.y += (1.0 / massLinear) * force.y * dt;
