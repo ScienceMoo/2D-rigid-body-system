@@ -48,7 +48,7 @@ public class MouseSpringForce {
     }
     
     /**
-     * Applies the mouse spring force to the picked rigid body, or nohting if no body selected
+     * Applies the mouse spring force to the picked rigid body, or nothing if no body selected
      */
     public void apply() {
         if ( picked == null ) return;

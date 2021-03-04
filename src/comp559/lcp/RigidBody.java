@@ -164,7 +164,7 @@ public class RigidBody {
         transformW2B.set( theta, x );
         transformW2B.invert();
     }
-    
+
     
     /**
      * Apply a contact force specified in world coordinates
@@ -235,13 +235,13 @@ public class RigidBody {
     public void advanceTime( double dt ) {
         if ( !pinned ) {            
             // TODO: use torques to advance the angular state of the rigid body
-            omega += (1.0 / massAngular) * torque * dt;
+            omega += (torque / massAngular) * dt;
             theta += omega * dt;
-//            if (theta < 0) {
-//                theta += Math.PI;
-//            } else if (theta > Math.PI) {
-//                theta -= Math.PI;
-//            }
+            if (theta < 0) {
+                theta += (2 * Math.PI);
+            } else if (theta > (2 * Math.PI)) {
+                theta -= (2 * Math.PI);
+            }
 
             v.x += (1.0 / massLinear) * force.x * dt;
             v.y += (1.0 / massLinear) * force.y * dt;

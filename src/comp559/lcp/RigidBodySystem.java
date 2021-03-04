@@ -80,7 +80,9 @@ public class RigidBodySystem {
      * @param dt time step
      */
     public void advanceTime( double dt ) {
-        long now = System.nanoTime();        
+        long now = System.nanoTime();
+
+//        jiggle();
 
         mouseSpring.apply();
         // apply gravity to all bodies
@@ -103,7 +105,7 @@ public class RigidBodySystem {
         for ( RigidBody b : bodies ) {
             b.advanceTime(dt);
         }
-        
+
         computeTime = (System.nanoTime() - now) / 1e9;
         simulationTime += dt;
         totalAccumulatedComputeTime += computeTime;
@@ -210,10 +212,10 @@ public class RigidBodySystem {
     private BooleanParameter drawBodies = new BooleanParameter( "draw bodies", true );
     private BooleanParameter drawBoundingVolumes = new BooleanParameter( "draw root bounding volumes", false );
     private BooleanParameter drawAllBoundingVolumes = new BooleanParameter( "draw ALL bounding volumes", false );
-    private BooleanParameter drawBoundingVolumesUsed = new BooleanParameter( "draw bounding volumes used", true );
-    private BooleanParameter drawCOMs = new BooleanParameter( "draw center of mass positions", false );
-    private BooleanParameter drawContacts = new BooleanParameter( "draw contact locations", true );
-    private BooleanParameter drawContactGraph = new BooleanParameter( "draw contact graph", true );
+    private BooleanParameter drawBoundingVolumesUsed = new BooleanParameter( "draw bounding volumes used", false );
+    private BooleanParameter drawCOMs = new BooleanParameter( "draw center of mass positions", true );
+    private BooleanParameter drawContacts = new BooleanParameter( "draw contact locations", false );
+    private BooleanParameter drawContactGraph = new BooleanParameter( "draw contact graph", false );
     private BooleanParameter processCollisions = new BooleanParameter( "process collisions", true );
     
     /**
